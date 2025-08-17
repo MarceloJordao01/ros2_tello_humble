@@ -1,0 +1,49 @@
+FROM osrf/ros:humble-desktop-full
+
+# Use bash nos RUNs (necessário para "source")
+SHELL ["/bin/bash", "-lc"]
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV WS=/tello_ros_ws
+# Variáveis do Gazebo disponíveis para qualquer processo
+ENV GAZEBO_MODEL_PATH=${WS}/install/tello_gazebo/share/tello_gazebo/models/
+ENV GAZEBO_AUDIO=0
+
+# Dependências de build e pacotes ROS 2 (Humble)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    python3-pip \
+    python3-colcon-common-extensions \
+    python3-rosdep \
+    ros-humble-cv-bridge \
+    ros-humble-camera-calibration-parsers \
+    libasio-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+# Instalar transformations via pip
+RUN python3 -m pip install --no-cache-dir transformations
+
+# Cria o workspace
+RUN mkdir -p ${WS}/src
+WORKDIR ${WS}
+
+# Copia todos os módulos locais (pasta "modules/") para o src
+COPY modules/ ${WS}/src/
+
+# Resolver dependências de sistema via rosdep e compilar
+RUN set -e; \
+    source /opt/ros/humble/setup.bash; \
+    rosdep init 2>/dev/null || true; \
+    rosdep update; \
+    apt-get update; \
+    rosdep install --from-paths src --ignore-src -r -y; \
+    rm -rf /var/lib/apt/lists/*; \
+    colcon build --symlink-install
+
+# Facilitar ambiente interativo
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
+    echo "source ${WS}/install/setup.bash" >> /root/.bashrc
+
+# A imagem já usa /ros_entrypoint.sh; abrir um bash é suficiente
+CMD ["bash"]
