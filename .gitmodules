@@ -4,3 +4,6 @@
 [submodule "modules/ros2_shared"]
 	path = modules/ros2_shared
 	url = https://github.com/ptrmu/ros2_shared.git
+[submodule "modules/tello_fase_1"]
+	path = modules/tello_fase_1
+	url = https://github.com/MarceloJordao01/tello_fase_1.git

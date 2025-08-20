@@ -15,7 +15,7 @@ MODULES_DIR="${PROJECT_ROOT}/modules"
 IMAGE_NAME="tello_ros2_humble"
 
 # Nome do container (só para facilitar identificar)
-CONTAINER_NAME="px4_container"
+CONTAINER_NAME="tello_conteiner"
 
 # Workspace dentro do container (deve casar com o Dockerfile)
 WS_IN_CONTAINER="/tello_ros_ws"
