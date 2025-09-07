@@ -25,13 +25,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # nvidia-container-runtime (nvidia-docker2)
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES all
-ENV MESA_D3D12_DEFAULT_ADAPTER_NAME NVIDIA
-ENV QT_X11_NO_MITSHM 1
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
+ENV MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA
+ENV QT_X11_NO_MITSHM=1
 
 # Instalar transformations via pip
-RUN python3 -m pip install --no-cache-dir transformations
+RUN python3 -m pip install --no-cache-dir \
+    transformations \
+    ultralytics \
+    'numpy<2,>=1.23'==1.26.4
 
 # Cria o workspace
 RUN mkdir -p ${WS}/src

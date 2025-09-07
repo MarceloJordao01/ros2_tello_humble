@@ -1,0 +1,1 @@
+docker exec -it tello_conteiner bash

@@ -19,10 +19,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-cv-bridge \
     ros-humble-camera-calibration-parsers \
     libasio-dev \
+    mesa-utils \
+    libgl1-mesa-dri libglx-mesa0 libegl1-mesa \
+    mesa-vulkan-drivers vulkan-tools \
  && rm -rf /var/lib/apt/lists/*
 
 # Instalar transformations via pip
-RUN python3 -m pip install --no-cache-dir transformations
+RUN python3 -m pip install --no-cache-dir \
+    transformations \
+    ultralytics \
+    'numpy<2,>=1.23'==1.26.4
 
 # Cria o workspace
 RUN mkdir -p ${WS}/src

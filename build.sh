@@ -1,1 +1,1 @@
-docker build -t tello_ros2_humble -f docker/Dockerfile.wsl2 .
+docker build -t tello_ros2_humble -f docker/Dockerfile.gpu .
