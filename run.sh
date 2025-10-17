@@ -10,6 +10,7 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Diretórios relevantes no host
 MODULES_DIR="${PROJECT_ROOT}/modules"
+UTILS_DIR="${PROJECT_ROOT}/utils"
 
 # Nome da imagem já construída
 IMAGE_NAME="tello_ros2_humble"
@@ -19,6 +20,10 @@ CONTAINER_NAME="tello_conteiner"
 
 # Workspace dentro do container (deve casar com o Dockerfile)
 WS_IN_CONTAINER="/tello_ros_ws"
+
+# Caminhos do runner (host -> container)
+BATCH_CALIB_SRC="${UTILS_DIR}/batch_calib_runner.py"
+BATCH_CALIB_DST="${WS_IN_CONTAINER}/batch_calib_runner.py"
 
 # =========================
 # PREP X11 / ÁUDIO / NVIDIA
@@ -37,6 +42,17 @@ if command -v xauth >/dev/null 2>&1; then
 fi
 
 # =========================
+# PREP DE ARQUIVOS (HOST)
+# =========================
+
+# Garante que o batch_calib_runner.py exista no caminho esperado
+if [[ ! -f "${BATCH_CALIB_SRC}" ]]; then
+  echo "ERRO: não encontrei ${BATCH_CALIB_SRC}"
+  echo "Certifique-se de que o script existe em utils/batch_calib_runner.py"
+  exit 1
+fi
+
+# =========================
 # COLETA DE VOLUMES
 # =========================
 
@@ -44,6 +60,9 @@ VOLUMES=()
 
 # 1) Montar todos os pacotes ROS (pastas em modules/* que contenham package.xml)
 VOLUMES+=("-v" "${PWD}/modules/:${WS_IN_CONTAINER}/src")
+
+# 2) Montar o batch_calib_runner.py para a raiz do workspace no container (somente leitura)
+VOLUMES+=("-v" "${BATCH_CALIB_SRC}:${BATCH_CALIB_DST}:ro")
 
 # 3) X11 socket e XAUTH (GUI)
 VOLUMES+=("-v" "/tmp/.X11-unix:/tmp/.X11-unix:rw")

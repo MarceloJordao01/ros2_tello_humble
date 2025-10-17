@@ -85,3 +85,13 @@ Essa simulação roda o gazebo, navigator e o rviz. Ao iniciar a simulação, o 
 ```bash
 ros2 service call /tello_navigator/start_auto std_srvs/srv/Trigger "{}"
 ```
+
+
+#### Executar o arquivo de calibração dentro do conteiner
+n é o numero de amostras
+w é o intervalo de tempo de registro da amostra (do inicio da simulação ate ficar parado)
+use-rviz é para abrir o rviz ou não
+
+```bash
+python3 /tello_ros_ws/batch_calib_runner.py -n 100 -w 28 --use-rviz false
+```
